@@ -65,33 +65,35 @@ export default async function (ipc: typeof Ipc, client: Client) {
                 const realPlaceholderId =
                   state.placeholderMatching[executionMatching.placeholderId];
                 if (realPlaceholderId) {
-                  const message = (await channel.messages
-                    .fetch(realPlaceholderId)
-                    .catch((e: any) => {
-                      addLog(`${e}`, client);
-                    })) as any;
-                  delete state.placeholderMatching[executionMatching.placeholderId];
-                  if (message && message.delete) {
-                    // delete message
-                    let t = 0;
-                    const retry = async () => {
-                      if (state.placeholderWaiting[executionMatching.placeholderId] && t < 10) {
-                        t++;
-                        setTimeout(() => retry(), 300);
-                      } else {
-                        await message.delete().catch((e: any) => {
-                          addLog(`${e}`, client);
-                        });
+                  if ('messages' in channel) {
+                    const message = (await channel.messages
+                      .fetch(realPlaceholderId)
+                      .catch((e: any) => {
+                        addLog(`${e}`, client);
+                      })) as any;
+                    delete state.placeholderMatching[executionMatching.placeholderId];
+                    if (message && message.delete) {
+                      // delete message
+                      let t = 0;
+                      const retry = async () => {
+                        if (state.placeholderWaiting[executionMatching.placeholderId] && t < 10) {
+                          t++;
+                          setTimeout(() => retry(), 300);
+                        } else {
+                          await message.delete().catch((e: any) => {
+                            addLog(`${e}`, client);
+                          });
 
-                        await performAction();
-                        ipc.server.emit(socket, 'send:action', {
-                          channelId,
-                          action: nodeParameters.actionType,
-                        });
-                      }
-                    };
-                    retry();
-                    return;
+                          await performAction();
+                          ipc.server.emit(socket, 'send:action', {
+                            channelId,
+                            action: nodeParameters.actionType,
+                          });
+                        }
+                      };
+                      retry();
+                      return;
+                    }
                   }
                 }
               }

@@ -44,17 +44,19 @@ export default async function (ipc: typeof Ipc, client: Client) {
                 ipc.server.emit(socket, 'send:prompt', state.promptData[message.id]);
                 delete state.promptData[message.id];
                 if (nodeParameters.placeholder) {
-                  const message = await channel
-                    .send({ content: nodeParameters.placeholder })
-                    .catch((e: any) => e);
-                  await execution(
-                    nodeParameters.executionId,
-                    message.id,
-                    channel.id,
-                    nodeParameters.apiKey,
-                    nodeParameters.baseUrl,
-                  ).catch((e) => e);
-                  placeholderLoading(message, message.id, nodeParameters.placeholder);
+                  if ('send' in channel) {
+                    const message = await channel
+                      .send({ content: nodeParameters.placeholder })
+                      .catch((e: any) => e);
+                    await execution(
+                      nodeParameters.executionId,
+                      message.id,
+                      channel.id,
+                      nodeParameters.apiKey,
+                      nodeParameters.baseUrl,
+                    ).catch((e) => e);
+                    placeholderLoading(message, message.id, nodeParameters.placeholder);
+                  }
                 }
               };
 
@@ -113,27 +115,29 @@ export default async function (ipc: typeof Ipc, client: Client) {
                 const realPlaceholderId =
                   state.placeholderMatching[executionMatching.placeholderId];
                 if (realPlaceholderId) {
-                  const message = await channel.messages
-                    .fetch(realPlaceholderId)
-                    .catch((e: any) => {
-                      addLog(`${e}`, client);
-                    });
-                  delete state.placeholderMatching[executionMatching.placeholderId];
-                  if (message && message.edit) {
-                    let t = 0;
-                    const retry = async () => {
-                      if (state.placeholderWaiting[executionMatching.placeholderId] && t < 10) {
-                        t++;
-                        setTimeout(() => retry(), 300);
-                      } else {
-                        await message.edit(sendObject as MessageEditOptions).catch((e: any) => {
-                          addLog(`${e}`, client);
-                        });
-                        promptProcessing(message);
-                      }
-                    };
-                    retry();
-                    return;
+                  if ('messages' in channel) {
+                    const message = await channel.messages
+                      .fetch(realPlaceholderId)
+                      .catch((e: any) => {
+                        addLog(`${e}`, client);
+                      });
+                    delete state.placeholderMatching[executionMatching.placeholderId];
+                    if (message && message.edit) {
+                      let t = 0;
+                      const retry = async () => {
+                        if (state.placeholderWaiting[executionMatching.placeholderId] && t < 10) {
+                          t++;
+                          setTimeout(() => retry(), 300);
+                        } else {
+                          await message.edit(sendObject as MessageEditOptions).catch((e: any) => {
+                            addLog(`${e}`, client);
+                          });
+                          promptProcessing(message);
+                        }
+                      };
+                      retry();
+                      return;
+                    }
                   }
                 }
               }
@@ -142,7 +146,7 @@ export default async function (ipc: typeof Ipc, client: Client) {
 
               let message;
 
-              if (nodeParameters.updateMessageId) {
+              if (nodeParameters.updateMessageId && 'messages' in channel) {
                 const messageToEdit = await channel.messages
                   .fetch(nodeParameters.updateMessageId)
                   .catch((e: any) => {
@@ -155,7 +159,7 @@ export default async function (ipc: typeof Ipc, client: Client) {
                       addLog(`${e}`, client);
                     });
                 }
-              } else {
+              } else if ('send' in channel) {
                 message = await channel.send(sendObject as MessageCreateOptions).catch((e: any) => {
                   addLog(`${e}`, client);
                 });

@@ -138,37 +138,41 @@ export default async function (ipc: typeof Ipc, client: Client) {
                 const realPlaceholderId =
                   state.placeholderMatching[executionMatching.placeholderId];
                 if (realPlaceholderId) {
-                  const message = await channel.messages
-                    .fetch(realPlaceholderId)
-                    .catch((e: any) => {
-                      addLog(`${e}`, client);
-                    });
-                  delete state.placeholderMatching[executionMatching.placeholderId];
-                  if (message && message.edit) {
-                    let t = 0;
-                    const retry = async () => {
-                      if (state.placeholderWaiting[executionMatching.placeholderId] && t < 10) {
-                        t++;
-                        setTimeout(() => retry(), 300);
-                      } else {
-                        await message.edit(sendObject).catch((e: any) => {
-                          addLog(`${e}`, client);
-                        });
-                        ipc.server.emit(socket, 'send:message', {
-                          channelId,
-                          messageId: message.id,
-                        });
-                      }
-                    };
-                    retry();
-                    return;
+                  if ('messages' in channel) {
+                    const message = await channel.messages
+                      .fetch(realPlaceholderId)
+                      .catch((e: any) => {
+                        addLog(`${e}`, client);
+                      });
+                    delete state.placeholderMatching[executionMatching.placeholderId];
+                    if (message && message.edit) {
+                      let t = 0;
+                      const retry = async () => {
+                        if (state.placeholderWaiting[executionMatching.placeholderId] && t < 10) {
+                          t++;
+                          setTimeout(() => retry(), 300);
+                        } else {
+                          await message.edit(sendObject).catch((e: any) => {
+                            addLog(`${e}`, client);
+                          });
+                          ipc.server.emit(socket, 'send:message', {
+                            channelId,
+                            messageId: message.id,
+                          });
+                        }
+                      };
+                      retry();
+                      return;
+                    }
                   }
                 }
               }
-              const message = (await channel.send(sendObject).catch((e: any) => {
-                addLog(`${e}`, client);
-              })) as Message;
-              ipc.server.emit(socket, 'send:message', { channelId, messageId: message.id });
+              if ('send' in channel) {
+                const message = (await channel.send(sendObject).catch((e: any) => {
+                  addLog(`${e}`, client);
+                })) as Message;
+                ipc.server.emit(socket, 'send:message', { channelId, messageId: message.id });
+              }
             })
             .catch((e: any) => {
               addLog(`${e}`, client);
