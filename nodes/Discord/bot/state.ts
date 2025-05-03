@@ -26,6 +26,8 @@ const state: {
       presence?: string;
       interactionMessageId?: string;
       debug?: boolean;
+      emojis?: string;
+      reactionType?: 'all' | 'add' | 'remove';
     };
   };
   channels: {

@@ -27,6 +27,7 @@ export const options: INodeProperties[] = [
           'userRoleAdded',
           'userRoleRemoved',
           'interaction',
+          'reaction',
         ],
       },
     },
@@ -348,5 +349,49 @@ export const options: INodeProperties[] = [
     required: false,
     default: false,
     description: 'If enabled, will log Discord events and n8n API calls to the console.',
+  },
+  {
+    displayName: 'Emojis',
+    name: 'emojis',
+    type: 'string',
+    required: false,
+    displayOptions: {
+      show: {
+        type: ['reaction'],
+      },
+    },
+    default: '',
+    description:
+      "Liste d'emojis séparés par des virgules à surveiller. Si vide, tous les emojis seront surveillés.",
+  },
+  {
+    displayName: "Type d'événement",
+    name: 'reactionType',
+    type: 'options',
+    required: false,
+    displayOptions: {
+      show: {
+        type: ['reaction'],
+      },
+    },
+    options: [
+      {
+        name: 'Tous les événements',
+        value: 'all',
+        description: 'Écouter à la fois les ajouts et les suppressions de réactions.',
+      },
+      {
+        name: 'Ajout de réaction',
+        value: 'add',
+        description: 'Écouter uniquement les ajouts de réactions.',
+      },
+      {
+        name: 'Suppression de réaction',
+        value: 'remove',
+        description: 'Écouter uniquement les suppressions de réactions.',
+      },
+    ],
+    default: 'all',
+    description: "Type d'événement de réaction à surveiller.",
   },
 ];

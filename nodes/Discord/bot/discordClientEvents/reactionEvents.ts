@@ -10,6 +10,8 @@ interface ITrigger {
   value?: string;
   webhookId: string;
   debug?: boolean;
+  emojis?: string;
+  reactionType?: 'all' | 'add' | 'remove';
 }
 
 export const handleReactionAdd = async (
@@ -25,7 +27,8 @@ export const handleReactionAdd = async (
   const triggers = Object.values(state.triggers).filter(
     (trigger: ITrigger) =>
       trigger.type === 'reaction' &&
-      (!trigger.channelIds?.length || trigger.channelIds.includes(channel.id)),
+      (!trigger.channelIds?.length || trigger.channelIds.includes(channel.id)) &&
+      (trigger.reactionType === 'all' || trigger.reactionType === 'add'),
   );
 
   for (const trigger of triggers) {
@@ -33,6 +36,15 @@ export const handleReactionAdd = async (
     if (trigger.roleIds?.length && !user.bot) {
       const member = await message.guild?.members.fetch(user.id);
       if (!member || !member.roles.cache.some((role) => trigger.roleIds?.includes(role.id))) {
+        continue;
+      }
+    }
+
+    // Vérifier l'emoji si un filtre est défini
+    if (trigger.emojis) {
+      const emojiList = trigger.emojis.split(',').map((e: string) => e.trim());
+      const reactionEmoji = reaction.emoji.name || reaction.emoji.toString();
+      if (!emojiList.includes(reactionEmoji)) {
         continue;
       }
     }
@@ -101,7 +113,8 @@ export const handleReactionRemove = async (
   const triggers = Object.values(state.triggers).filter(
     (trigger: ITrigger) =>
       trigger.type === 'reaction' &&
-      (!trigger.channelIds?.length || trigger.channelIds.includes(channel.id)),
+      (!trigger.channelIds?.length || trigger.channelIds.includes(channel.id)) &&
+      (trigger.reactionType === 'all' || trigger.reactionType === 'remove'),
   );
 
   for (const trigger of triggers) {
@@ -109,6 +122,15 @@ export const handleReactionRemove = async (
     if (trigger.roleIds?.length && !user.bot) {
       const member = await message.guild?.members.fetch(user.id);
       if (!member || !member.roles.cache.some((role) => trigger.roleIds?.includes(role.id))) {
+        continue;
+      }
+    }
+
+    // Vérifier l'emoji si un filtre est défini
+    if (trigger.emojis) {
+      const emojiList = trigger.emojis.split(',').map((e) => e.trim());
+      const reactionEmoji = reaction.emoji.name || reaction.emoji.toString();
+      if (!emojiList.includes(reactionEmoji)) {
         continue;
       }
     }
