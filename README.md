@@ -2,286 +2,291 @@
 
 ![n8n.io - Workflow Automation](https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-logo.png)
 
-Ce projet est un fork de [n8n-nodes-discord](https://github.com/edbrdi/n8n-nodes-discord) avec des améliorations et des fonctionnalités supplémentaires.
+This project is a fork of [n8n-nodes-discord](https://github.com/edbrdi/n8n-nodes-discord) with improvements and additional features. All modifications and translations have been assisted by AI to ensure accuracy and consistency.
 
-[n8n](https://www.n8n.io) nœuds pour déclencher des workflows depuis Discord ou envoyer des messages interactifs. Utilise l'API des composants qui permet de créer des dialogues (par exemple, attacher des boutons et attendre que l'utilisateur clique dessus).
+[n8n](https://www.n8n.io) nodes to trigger workflows from Discord or send interactive messages. Uses the components API which allows creating dialogs (for example, attaching buttons and waiting for the user to click on them).
 
-Ces nœuds n'utilisent pas de webhooks mais un bot Discord pour permettre une communication bidirectionnelle. Le bot se lance automatiquement dans un processus principal une fois configuré et transmet ou reçoit des données des processus enfants lorsqu'un nœud est exécuté.
+These nodes do not use webhooks but a Discord bot to enable bidirectional communication. The bot automatically starts in a main process once configured and forwards or receives data from child processes when a node is executed.
 
 ## Installation
 
-Suivez les instructions d'installation dans la [documentation des nœuds communautaires n8n](https://docs.n8n.io/integrations/community-nodes/installation/).
+Follow the installation instructions in the [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/installation/).
 
-### Développement local
+### Local Development
 
-Pour commencer à développer ce nœud, vous pouvez utiliser les commandes suivantes :
+To start developing this node, you can use the following commands:
 
 ```bash
-# Installer les dépendances
+# Install dependencies
 npm install
 
-# Démarrer la surveillance des changements
+# Start watching for changes
 npm run dev
 
-# Construire le nœud
+# Build the node
 npm run build
 ```
 
-## Utilisation
+## Usage
 
-Ce nœud fournit un pont entre n8n et Discord, vous permettant de :
+This node provides a bridge between n8n and Discord, allowing you to:
 
-- Déclencher des workflows n8n à partir d'événements Discord
-- Envoyer des messages interactifs vers les canaux Discord
-- Créer des dialogues avec des boutons et attendre les interactions des utilisateurs
-- Suivre les réactions sur les messages
+- Trigger n8n workflows from Discord events
+- Send interactive messages to Discord channels
+- Create dialogs with buttons and wait for user interactions
+- Track reactions on messages
 
-## Comment installer
+## How to Install
 
-### Nœuds Communautaires (Recommandé)
+### Community Nodes (Recommended)
 
-1. Allez dans **Paramètres > Nœuds Communautaires**.
-2. Sélectionnez **Installer**.
-3. Entrez `n8n-nodes-discord-bridge` dans **Entrer le nom du package npm**.
-4. Acceptez les [risques](https://docs.n8n.io/integrations/community-nodes/risks/) d'utilisation des nœuds communautaires : sélectionnez **Je comprends les risques d'installation de code non vérifié depuis une source publique**.
-5. Sélectionnez **Installer**.
+1. Go to **Settings > Community Nodes**.
+2. Select **Install**.
+3. Enter `n8n-nodes-discord-bridge` in **Enter npm package name**.
+4. Accept the [risks](https://docs.n8n.io/integrations/community-nodes/risks/) of using community nodes: select **I understand the risks of installing unverified code from a public source**.
+5. Select **Install**.
 
-Après l'installation du nœud, vous pouvez l'utiliser comme n'importe quel autre nœud. n8n affiche le nœud dans les résultats de recherche du panneau **Nœuds**.
+After installing the node, you can use it like any other node. n8n displays the node in the **Nodes** panel search results.
 
-### Installation manuelle
+### Manual Installation
 
-Pour commencer, installez le package dans votre répertoire racine n8n :
+To get started, install the package in your n8n root directory:
 
 `npm install n8n-nodes-discord-bridge`
 
-Pour les déploiements basés sur Docker, ajoutez la ligne suivante avant la commande d'installation de la police dans votre [Dockerfile n8n](https://github.com/n8n-io/n8n/blob/master/docker/images/n8n/Dockerfile) :
+For Docker-based deployments, add the following line before the font installation command in your [n8n Dockerfile](https://github.com/n8n-io/n8n/blob/master/docker/images/n8n/Dockerfile):
 
 `RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-discord-bridge`
 
-## Configuration du bot
+## Bot Configuration
 
-Pour envoyer, écouter les messages, obtenir la liste des canaux ou des rôles, vous devez configurer un bot en utilisant le [Portail Développeur Discord](https://discord.com/developers/applications).
+To send, listen to messages, get the list of channels or roles, you need to configure a bot using the [Discord Developer Portal](https://discord.com/developers/applications).
 
-Premièrement, créez une application en cliquant sur **Nouvelle Application** dans le [Portail Développeur](https://discord.com/developers/applications).
+First, create an application by clicking **New Application** in the [Developer Portal](https://discord.com/developers/applications).
 
-Allez dans **OAuth2** et copiez l'ID client. Sur votre instance n8n, vous allez créer de nouvelles identifiants Discord App (**Identifiants > Nouveau > Rechercher "Discord App" > Continuer**) et coller l'ID Client dans le champ correspondant. Ne fermez pas encore la fenêtre.
+Go to **OAuth2** and copy the client ID. On your n8n instance, you will create new Discord App credentials (**Credentials > New > Search "Discord App" > Continue**) and paste the Client ID in the corresponding field. Don't close the window yet.
 
 ![](images/oauth.png)
 
 ![](images/credentials.png)
 
-Retournez sur le Portail Développeur Discord de votre application créée, allez dans **Bot** et cliquez sur **Ajouter Bot**. Dans le **Flux d'Autorisation**, désactivez **Bot Public**. Activez tous les **Intents Privilégiés de la Passerelle** puis sauvegardez vos modifications.
+Return to your created application's Discord Developer Portal, go to **Bot** and click **Add Bot**. In the **Authorization Flow**, disable **Public Bot**. Enable all **Privileged Gateway Intents** then save your changes.
 
 ![](images/bot-1.png)
 
-Allez dans **OAuth > Générateur d'URL**, sélectionnez les scopes **bot** et **applications.commands**, la permission du bot **administrateur** puis copiez l'URL générée en bas.
+Go to **OAuth > URL Generator**, select the **bot** and **applications.commands** scopes, the bot permission **administrator** then copy the generated URL at the bottom.
 
 ![](images/url-gen.png)
 
-Utilisez maintenant ce lien pour ajouter le bot à votre serveur Discord. Vous devez être connecté à Discord sur le navigateur avec le même compte où vous avez les permissions **Gérer le Serveur** ou **Administrateur** sur le serveur où vous voulez ajouter le bot.
+Now use this link to add the bot to your Discord server. You must be logged into Discord in the browser with the same account where you have **Manage Server** or **Administrator** permissions on the server where you want to add the bot.
 
-Une fois votre bot ajouté à votre serveur, vous devez obtenir le token du bot et l'ajouter à vos identifiants Discord App. Cliquez simplement sur **Copier** sur votre page de bot ou **Réinitialiser le Token** si le bouton **Copier** n'est pas visible.
+Once your bot is added to your server, you need to get the bot token and add it to your Discord App credentials. Simply click **Copy** on your bot page or **Reset Token** if the **Copy** button is not visible.
 
 ![](images/bot-2.png)
 
 ![](images/credentials-2.png)
 
-Sauvegardez vos identifiants et allez dans **Paramètres > API n8n**, cliquez sur **Créer une Clé API** ou sélectionnez celle existante, copiez la clé, rouvrez vos identifiants Discord App (**Identifiants > Ouvrir**), collez la clé dans le champ **Clé API n8n** et définissez votre URL de base (par exemple https://n8n.example.com/api/v1). N'oubliez pas de sauvegarder à nouveau.
+Save your credentials and go to **Settings > n8n API**, click **Create API Key** or select the existing one, copy the key, reopen your Discord App credentials (**Credentials > Open**), paste the key in the **n8n API Key** field and set your base URL (e.g. https://n8n.example.com/api/v1). Don't forget to save again.
 
 ![](images/n8n-api.png)
 
 ![](images/credentials-3.png)
 
-Vous pourrez maintenant utiliser les nœuds **Discord Trigger** et **Discord Send** dans vos workflows. La première fois que vous configurez l'un de ces nœuds, il démarrera le bot.
+You can now use the **Discord Trigger** and **Discord Send** nodes in your workflows. The first time you configure one of these nodes, it will start the bot.
 
-## Référence du Nœud Discord Trigger
+## Discord Trigger Node Reference
 
-- **Identifiants pour Discord App** : Si vous avez suivi le guide de configuration du bot ci-dessus, vous pourrez sélectionner vos identifiants Discord App pour démarrer le bot. Si vous utilisez déjà un autre nœud Discord Trigger (ou Send), faites attention à sélectionner les mêmes identifiants. Il n'est pas prévu pour le moment d'être utilisé avec plusieurs serveurs Discord.
-- **Écouter** : Vous permet de sélectionner les canaux texte que vous souhaitez surveiller pour déclencher le workflow. Si aucun n'est sélectionné, tous les canaux seront surveillés. Vos identifiants doivent être configurés et le bot en cours d'exécution, vous avez également besoin d'au moins un canal texte disponible. Si vous ne remplissez pas ces conditions, effectuez les modifications puis fermez et rouvrez la fenêtre (la liste des canaux est chargée lorsque la fenêtre s'ouvre). Pour les types de déclencheurs "Utilisateur", si vous souhaitez utiliser un placeholder, sélectionnez le canal où vous voulez qu'il s'affiche.
-- **Depuis les rôles** : La même logique s'applique ici pour les rôles, sauf qu'elle est optionnelle. Si vous ne sélectionnez aucun rôle, il écoutera **@everyone**.
-- **Type de déclencheur** : Type d'événement à écouter. Les événements utilisateur doivent spécifier un canal à écouter si vous souhaitez utiliser un placeholder ou l'option "envoyer au canal de déclenchement" dans un nœud Discord Send.
-  - **Message** : Écouter les messages envoyés dans les canaux sélectionnés.
-  - **Commande** : Écouter les commandes envoyées dans les canaux sélectionnés.
-  - **Interaction** : Écouter les boutons/select persistants.
-  - **Réaction** : Écouter les réactions ajoutées ou supprimées sur les messages.
-  - **Utilisateur rejoint** : Écouter les utilisateurs rejoignant le serveur.
-  - **Utilisateur quitte** : Écouter les utilisateurs quittant le serveur.
-  - **Mise à jour de présence utilisateur** : Écouter les changements de présence des utilisateurs.
-  - **Rôle utilisateur ajouté** : Écouter les rôles ajoutés aux utilisateurs.
-  - **Rôle utilisateur supprimé** : Écouter les rôles supprimés des utilisateurs.
-- **Présence** : Si le type de déclencheur est une mise à jour de présence. Type de présence à écouter.
-  - **Tout changement** : Lorsqu'une présence utilisateur est mise à jour.
-  - **En ligne** : Lorsqu'une présence utilisateur est définie sur en ligne.
-  - **Hors ligne** : Lorsqu'une présence utilisateur est définie sur hors ligne.
-  - **Ne pas déranger** : Lorsqu'une présence utilisateur est définie sur ne pas déranger.
-  - **Inactif** : Lorsqu'une présence utilisateur est définie sur inactif.
-- **Depuis les rôles** : Lors de l'écoute des mises à jour de rôle utilisateur, sélectionnez quel rôle supprimé ou ajouté doit correspondre.
-- **ID du message** : Si le type de déclencheur est une interaction. L'ID du message du bouton/select à écouter.
-- **Motif** : Messages uniquement. Sélectionnez comment la valeur ci-dessous sera reconnue. ⚠ Gardez à l'esprit que la valeur sera testée avec toutes les mentions supprimées et un trim appliqué (espaces supprimés au début et à la fin). Par exemple `@bot hello` sera testé sur `hello`.
-  - **Égal** : Correspond à la valeur exacte.
-  - **Commence par** : Correspond au début du message avec la valeur spécifiée.
-  - **Contient** : Correspond à la valeur à n'importe quelle position dans le message.
-  - **Se termine par** : Correspond à la fin du message avec la valeur spécifiée.
-  - **Regex** : Correspond à l'expression régulière ECMAScript personnalisée fournie.
-- **Valeur** : Messages uniquement. La valeur que vous testerez sur tous les messages écoutés.
-- **Sensible à la casse** : Messages uniquement. Détermine s'il sera sensible à la casse lors de la correspondance de la valeur.
-- **Mention du bot** : Messages uniquement. Si vrai, un message devra également mentionner le bot pour déclencher le workflow (cela n'exclut pas les autres critères).
-- **Nom** : Commande uniquement. Le nom de la commande à écouter.
-- **Description** : Commande uniquement. La description de la commande à écouter.
-- **Type de champ d'entrée** : Commande uniquement. Le type du champ d'entrée.
-- **Description du champ d'entrée** : Commande uniquement. La description du champ d'entrée.
-- **Champ d'entrée requis** : Commande uniquement. Si le champ d'entrée est requis.
-- **Placeholder** : Le placeholder est un message qui apparaîtra dans le canal qui déclenche le workflow. Trois points animés ajoutés au placeholder indiquent que le workflow est en cours d'exécution. À partir d'un nœud Discord Send, vous pouvez configurer un message de réponse qui remplacera alors ce placeholder.
+- **Discord App Credentials**: If you followed the bot configuration guide above, you will be able to select your Discord App credentials to start the bot. If you are already using another Discord Trigger (or Send) node, be careful to select the same credentials. It is not currently intended to be used with multiple Discord servers.
+- **Listen to**: Lets you select the text channels you want to monitor to trigger the workflow. If none are selected, all channels will be monitored. Your credentials must be configured and the bot running, you also need at least one text channel available. If you don't meet these requirements, make the changes then close and reopen the window (the channels list is loaded when the window opens). For "User" trigger types, if you want to use a placeholder, select the channel where you want it to appear.
+- **From roles**: The same logic applies here for roles, except it's optional. If you don't select any role, it will listen to **@everyone**.
+- **Trigger type**: Type of event to listen to. User events must specify a channel to listen to if you want to use a placeholder or the "send to trigger channel" option in a Discord Send node.
+  - **Message**: Listen to messages sent in selected channels.
+  - **Command**: Listen to commands sent in selected channels.
+  - **Interaction**: Listen to persistent buttons/select.
+  - **Reaction**: Listen to reactions added or removed on messages.
+    - **Emojis**: List of emojis separated by commas to monitor. If empty, all emojis will be monitored.
+    - **Event Type**: Type of reaction event to monitor.
+      - **All events**: Listen to both reaction additions and removals.
+      - **Reaction add**: Listen only to reaction additions.
+      - **Reaction remove**: Listen only to reaction removals.
+  - **User joins**: Listen to users joining the server.
+  - **User leaves**: Listen to users leaving the server.
+  - **User presence update**: Listen to user presence changes.
+  - **User role added**: Listen to roles added to users.
+  - **User role removed**: Listen to roles removed from users.
+- **Presence**: If the trigger type is a presence update. Type of presence to listen to.
+  - **Any change**: When a user presence is updated.
+  - **Online**: When a user presence is set to online.
+  - **Offline**: When a user presence is set to offline.
+  - **Do not disturb**: When a user presence is set to do not disturb.
+  - **Idle**: When a user presence is set to idle.
+- **From roles**: When listening to user role updates, select which removed or added role should match.
+- **Message ID**: If the trigger type is an interaction. The ID of the button/select message to listen to.
+- **Pattern**: Messages only. Select how the value below will be recognized. ⚠ Keep in mind that the value will be tested with all mentions removed and a trim applied (spaces removed at the beginning and end). For example `@bot hello` will be tested on `hello`.
+  - **Equal**: Matches the exact value.
+  - **Starts with**: Matches the beginning of the message with the specified value.
+  - **Contains**: Matches the value at any position in the message.
+  - **Ends with**: Matches the end of the message with the specified value.
+  - **Regex**: Matches the custom ECMAScript regular expression provided.
+- **Value**: Messages only. The value you will test on all listened messages.
+- **Case Sensitive**: Messages only. Determines if it will be case sensitive when matching the value.
+- **Bot Mention**: Messages only. If true, a message will also need to mention the bot to trigger the workflow (this does not exclude other criteria).
+- **Name**: Command only. The name of the command to listen to.
+- **Description**: Command only. The description of the command to listen to.
+- **Input field type**: Command only. The type of the input field.
+- **Input field description**: Command only. The description of the input field.
+- **Input field required**: Command only. If the input field is required.
+- **Placeholder**: The placeholder is a message that will appear in the channel that triggers the workflow. Three animated dots added to the placeholder indicate that the workflow is running. From a Discord Send node, you can set up a response message which will then take the place of this placeholder.
 
-/!\ N'oubliez pas d'activer votre déclencheur, même si vous voulez juste le tester.
+/!\ Don't forget to enable your trigger, even if you just want to test it.
 
-### Données retournées
+### Returned Data
 
-- **content** : Le contenu du message déclencheur (si type message).
-- **channelId** : L'ID du canal déclencheur.
-- **userId** : L'ID de l'utilisateur déclencheur.
-- **userName** : Le nom d'utilisateur déclencheur.
-- **userTag** : Le tag de l'utilisateur déclencheur.
-- **interactionValues** : Les valeurs d'interaction déclencheuses (si type interaction).
-- **messageId** : L'ID du message déclencheur (si type message).
-- **presence** : Le statut de présence déclencheur (si type mise à jour de présence).
-- **addedRoles** : Le rôle ajouté déclencheur (si type rôle ajouté).
-- **removedRoles** : Le rôle supprimé déclencheur (si type rôle supprimé).
-- **userRoles** : Liste des IDs de rôles de l'utilisateur déclencheur (si type déclencheur interaction).
-- **attachments** : Le tableau des pièces jointes déclencheuses (si type message && pièces jointes envoyées).
-- **reactionEmoji** : L'emoji utilisé dans la réaction (si type réaction).
-- **reactionAction** : Le type d'action de réaction ('add' ou 'remove') (si type réaction).
+- **content**: The content of the trigger message (if type message).
+- **channelId**: The ID of the trigger channel.
+- **userId**: The ID of the trigger user.
+- **userName**: The username of the trigger user.
+- **userTag**: The tag of the trigger user.
+- **interactionValues**: The trigger interaction values (if type interaction).
+- **messageId**: The ID of the trigger message (if type message).
+- **presence**: The trigger presence status (if type presence update).
+- **addedRoles**: The trigger added role (if type role added).
+- **removedRoles**: The trigger removed role (if type role removed).
+- **userRoles**: List of trigger user role IDs (if type interaction trigger).
+- **attachments**: The array of trigger attachments (if type message && attachments sent).
+- **reactionEmoji**: The emoji used in the reaction (if type reaction).
+- **reactionAction**: The type of reaction action ('add' or 'remove') (if type reaction).
 
-## Référence du Nœud Discord Send
+## Discord Send Node Reference
 
-- **Identifiants pour Discord App** : Si vous avez suivi le guide de configuration du bot ci-dessus, vous pourrez sélectionner vos identifiants Discord App pour démarrer le bot. Si vous utilisez déjà un autre nœud Discord Trigger (ou Send), faites attention à sélectionner les mêmes identifiants. Il n'est pas prévu pour le moment d'être utilisé avec plusieurs serveurs Discord.
-- **Remplacer le placeholder du déclencheur** : Si actif, le message produit par ce nœud remplacera le placeholder précédent défini. Il peut s'agir d'un placeholder défini par le nœud Discord Trigger ou par un autre nœud Discord Send.
-- **Envoyer au canal du déclencheur** : Si actif, le message produit sera envoyé au même canal où le workflow a été déclenché (mais ne remplacera pas le placeholder s'il y en a un).
-- **Envoyer à** : Vous permet de spécifier les canaux texte où vous souhaitez envoyer le message. Vos identifiants doivent être configurés et le bot en cours d'exécution, vous avez également besoin d'au moins un canal texte disponible. Si vous ne remplissez pas ces conditions, effectuez les modifications puis fermez et rouvrez la fenêtre (la liste des canaux est chargée lorsque la fenêtre s'ouvre).
-- **Type** : Vous permet de choisir le type d'interaction que vous souhaitez effectuer.
+- **Discord App Credentials**: If you followed the bot configuration guide above, you will be able to select your Discord App credentials to start the bot. If you are already using another Discord Trigger (or Send) node, be careful to select the same credentials. It is not currently intended to be used with multiple Discord servers.
+- **Replace trigger placeholder**: If active, the message produced by this node will replace the previous placeholder set. It can be a placeholder set by the Discord Trigger node or by another Discord Send node.
+- **Send to trigger channel**: If active, the message produced will be sent to the same channel where the workflow was triggered (but not replace the placeholder if there is one).
+- **Send to**: Lets you specify the text channels where you want to send the message. Your credentials must be configured and the bot running, you also need at least one text channel available. If you don't meet these requirements, make the changes then close and reopen the window (the channels list is loaded when the window opens).
+- **Type**: Lets you choose the type of interaction you want to perform.
 
-  - **Message** : C'est le type par défaut, il vous permet d'envoyer un message sans nécessiter de réponse.
-    - **Contenu** : Message texte affiché.
-    - **Embed** : Si actif, il permettra la création de messages enrichis comme ceci : ![](images/embed.png)
-      - **Couleur** (1)
-      - **Titre** (2)
+  - **Message**: This is the default type, it allows you to send a message without requiring a response.
+    - **Content**: Displayed text message.
+    - **Embed**: If active, it will allow the creation of rich messages like this: ![](images/embed.png)
+      - **Color** (1)
+      - **Title** (2)
       - **URL** (3)
-      - **Nom de l'auteur** (4)
-      - **URL de l'icône de l'auteur ou base64** (5)
-      - **URL de l'auteur** (6)
+      - **Author Name** (4)
+      - **Author Icon URL or base64** (5)
+      - **Author URL** (6)
       - **Description** (7)
-      - **URL de la miniature ou base64** (8)
-      - **Champs** (9)
-        - **Champ** : Si vous ajoutez un champ vide (pas de titre/valeur), il créera un espace dans l'embed.
-          - **Titre** (10)
-          - **Valeur** (11)
-          - **En ligne** (12)
-      - **URL de l'image ou base64** (13)
-      - **Texte du pied de page** (14)
-      - **URL de l'icône du pied de page ou base64** (15)
-      - **Date affichée** (16)
-    - **Fichiers** : Permet d'attacher jusqu'à 5 images au message.
-      - **URL ou base64** : URL/base64 de l'image à attacher (png, jpg).
-  - **Invite avec Boutons** : Il vous permet d'envoyer un dialogue interactif avec des boutons sur lesquels les utilisateurs peuvent cliquer. L'exécution du workflow attendra jusqu'à ce que quelqu'un réponde.
-    - **Contenu** : Message texte affiché.
-    - **Boutons** : Discord permet d'ajouter jusqu'à 5 boutons.
-      - **Bouton**
-        - **Label** : Label affiché sur le bouton.
-        - **Valeur** : Valeur retournée par le nœud si cliqué.
-        - **Style** : Vous pouvez choisir entre 4 styles différents (primary, secondary, success, danger).
-    - **Délai d'attente** : Temps (secondes) pendant lequel votre workflow attendra avant de passer au nœud suivant (ou d'arrêter l'exécution). Le temps restant sera affiché et mis à jour à la fin du message texte. Si le délai est égal à 0, il attendra indéfiniment.
-    - **Restreindre à l'utilisateur déclencheur** : Seul l'utilisateur déclenchant le workflow pourra interagir (les autres seront ignorés).
-    - **Restreindre aux rôles mentionnés** : Seuls les utilisateurs ayant l'un des rôles mentionnés pourront interagir (les autres seront ignorés).
-  - **Invite avec Select** : Même chose que l'invite avec boutons, mais il affichera une liste déroulante au lieu de boutons.
-    - **Contenu** : Message texte affiché.
+      - **Thumbnail URL or base64** (8)
+      - **Fields** (9)
+        - **Field**: If you add an empty field (no title/value), it will create a space in the embed.
+          - **Title** (10)
+          - **Value** (11)
+          - **Inline** (12)
+      - **Image URL or base64** (13)
+      - **Footer Text** (14)
+      - **Footer Icon URL or base64** (15)
+      - **Displayed Date** (16)
+    - **Files**: Allows attaching up to 5 images to the message.
+      - **URL or base64**: URL/base64 of the image to attach (png, jpg).
+  - **Prompt with Buttons**: It allows you to send an interactive dialog with buttons that users can click on. The workflow execution will wait until someone responds.
+    - **Content**: Displayed text message.
+    - **Buttons**: Discord allows adding up to 5 buttons.
+      - **Button**
+        - **Label**: Label displayed on the button.
+        - **Value**: Value returned by the node if clicked.
+        - **Style**: You can choose between 4 different styles (primary, secondary, success, danger).
+    - **Timeout**: Time (seconds) during which your workflow will wait before moving to the next node (or stopping execution). The remaining time will be displayed and updated at the end of the text message. If the timeout is equal to 0, it will wait indefinitely.
+    - **Restrict to trigger user**: Only the user triggering the workflow will be able to interact (others will be ignored).
+    - **Restrict to mentioned roles**: Only users having one of the mentioned roles will be able to interact (others will be ignored).
+  - **Prompt with Select**: Same as prompt with buttons, but it will display a dropdown list instead of buttons.
+    - **Content**: Displayed text message.
     - **Select**
       - **Option**
-        - **Label** : Label affiché sur l'option.
-        - **Description** : Description affichée optionnelle.
-        - **Valeur** : Valeur retournée par le nœud si sélectionnée.
-    - Les autres paramètres sont les mêmes que pour l'invite avec boutons.
-  - **Action** : Au lieu d'envoyer un message, il effectuera une action définie dans le champ suivant.
-    - **Action** : Vous permet de choisir le type d'action que vous souhaitez effectuer. D'autres types seront ajoutés à l'avenir.
-      - **Supprimer des messages** : Supprimer les derniers messages du canal "envoyer à".
-        - **Combien ?** : Nombre de derniers messages à supprimer (l'API Discord permet max 150 et messages < 4 semaines).
-      - **Ajouter un rôle à l'utilisateur** : Ajouter un rôle à un utilisateur.
-        - **ID utilisateur** : Utilisateur auquel ajouter le rôle.
-        - **Quels rôles** : Rôles à ajouter à l'utilisateur.
-      - **Supprimer un rôle de l'utilisateur** : Supprimer un rôle d'un utilisateur.
-        - **ID utilisateur** : Utilisateur duquel supprimer le rôle.
-        - **Quels rôles** : Rôles à supprimer de l'utilisateur.
+        - **Label**: Label displayed on the option.
+        - **Description**: Optional displayed description.
+        - **Value**: Value returned by the node if selected.
+    - Other parameters are the same as for prompt with buttons.
+  - **Action**: Instead of sending a message, it will perform an action defined in the following field.
+    - **Action**: Lets you choose the type of action you want to perform. Other types will be added in the future.
+      - **Remove messages**: Remove the last messages from the "send to" channel.
+        - **How many?**: Number of last messages to remove (Discord API allows max 150 and messages < 4 weeks).
+      - **Add role to user**: Add a role to a user.
+        - **User ID**: User to add the role to.
+        - **Which roles**: Roles to add to the user.
+      - **Remove role from user**: Remove a role from a user.
+        - **User ID**: User to remove the role from.
+        - **Which roles**: Roles to remove from the user.
 
-- **Persistant** : Disponible pour le type invite. Si actif, le bouton/select restera visible même lorsque le workflow est terminé.
-  - **Sélection min** : Disponible pour le type invite select. Nombre minimum d'options qui peuvent être sélectionnées.
-  - **Sélection max** : Disponible pour le type invite select. Nombre maximum d'options qui peuvent être sélectionnées.
-  - **ID du message** : Si vous voulez modifier un message d'invite précédent au lieu d'en créer un nouveau, vous pouvez spécifier l'ID du message.
-- **Mentionner les rôles** : Vous permet de spécifier les rôles que vous souhaitez mentionner dans le message. Vos identifiants doivent être configurés et le bot en cours d'exécution, vous avez également besoin d'au moins un rôle (à part @everyone) disponible. Si vous ne remplissez pas ces conditions, effectuez les modifications puis fermez et rouvrez la fenêtre.
-- **Placeholder** : Non disponible pour les messages simples. Le placeholder est un message qui apparaîtra dans le canal où le bouton ou l'invite select est affiché. Trois points animés ajoutés au placeholder indiquent que le workflow est en cours d'exécution. À partir d'un autre nœud Discord Send, vous pouvez configurer un message de réponse qui remplacera alors ce placeholder.
-- **Personnalisation du bot** : Activez cette option pour personnaliser l'activité et le statut du bot.
-  - **Activité du bot** : Lorsque vous définissez une activité du bot, elle sera affichée dans la section "En train de jouer" du profil du bot. Vous devez rafraîchir l'activité périodiquement si vous voulez la maintenir.
-  - **Type d'activité du bot** : Vous permet de personnaliser le type d'activité affiché sur le profil du bot.
-  - **Statut du bot** : Vous permet de personnaliser le statut du bot (si une activité du bot est également définie).
+- **Persistent**: Available for prompt type. If active, the button/select will remain visible even when the workflow is finished.
+  - **Min selection**: Available for prompt select type. Minimum number of options that can be selected.
+  - **Max selection**: Available for prompt select type. Maximum number of options that can be selected.
+  - **Message ID**: If you want to modify a previous prompt message instead of creating a new one, you can specify the message ID.
+- **Mention roles**: Lets you specify the roles you want to mention in the message. Your credentials must be configured and the bot running, you also need at least one role (besides @everyone) available. If you don't meet these requirements, make the changes then close and reopen the window.
+- **Placeholder**: Not available for simple messages. The placeholder is a message that will appear in the channel where the button or prompt select is displayed. Three animated dots added to the placeholder indicate that the workflow is running. From another Discord Send node, you can set up a response message which will then take the place of this placeholder.
+- **Bot customization**: Enable this option to customize the bot's activity and status.
+  - **Bot activity**: When you set a bot activity, it will be displayed in the "Playing" section of the bot's profile. You need to refresh the activity periodically if you want to maintain it.
+  - **Bot activity type**: Lets you customize the type of activity displayed on the bot's profile.
+  - **Bot status**: Lets you customize the bot's status (if a bot activity is also set).
 
-### Données retournées
+### Returned Data
 
-- **value** : Si type invite bouton/select, retourne la valeur de la sélection de l'utilisateur.
-- **channelId** : L'ID du canal où le message est envoyé.
-- **userId** : Si type invite bouton/select, retourne l'ID de l'utilisateur interagissant.
-- **userName** : Si type invite bouton/select, retourne le nom d'utilisateur de l'utilisateur interagissant.
-- **userTag** : Si type invite bouton/select, retourne le tag de l'utilisateur interagissant.
-- **messageId** : L'ID du message envoyé.
-- **action** : Si type action, retourne l'action effectuée (pour le moment le seul type disponible est removeMessages).
+- **value**: If type prompt button/select, returns the value of the user's selection.
+- **channelId**: The ID of the channel where the message is sent.
+- **userId**: If type prompt button/select, returns the ID of the interacting user.
+- **userName**: If type prompt button/select, returns the username of the interacting user.
+- **userTag**: If type prompt button/select, returns the tag of the interacting user.
+- **messageId**: The ID of the sent message.
+- **action**: If type action, returns the performed action (for now the only available type is removeMessages).
 
-## Commandes
+## Commands
 
-Pour vous aider à créer et déboguer votre workflow avec les nœuds Discord Trigger/Send, certaines commandes ont été enregistrées pour le bot.
+To help you create and debug your workflow with the Discord Trigger/Send nodes, some commands have been registered for the bot.
 
-- `/logs` : Affiche les derniers logs stockés en mémoire (max 100).
-  - **Avec paramètres**
-    - `/logs 10` : Si vous spécifiez un nombre, il affichera le nombre de derniers logs.
-    - `/logs clear` : Supprime tous les logs en mémoire.
-    - `/logs on` : Les logs sont automatiquement envoyés dans le canal actuel.
-    - `/logs off` : Désactive les logs automatiquement envoyés dans le canal.
-- `/clear` : Supprime les derniers messages (max 100) dans le canal actuel.
-  - **Avec paramètres**
-    - `/clear 10` : Si vous spécifiez un nombre, il supprimera le nombre de derniers messages.
-- `/test` : Bascule le mode test. Le mode test bascule le bot Discord sur l'URL de test du déclencheur. Utile si vous voulez voir comment un workflow est exécuté et comment les données sont transmises. Une fois le mode test activé, allez dans l'interface Discord Trigger et cliquez sur **Récupérer l'événement de test** puis sur Discord envoyez un message pour déclencher le workflow.
-  - **Avec paramètres**
-    - `/test true` : Active le mode test.
-    - `/test false` : Désactive le mode test.
+- `/logs`: Displays the last logs stored in memory (max 100).
+  - **With parameters**
+    - `/logs 10`: If you specify a number, it will display the number of last logs.
+    - `/logs clear`: Deletes all logs in memory.
+    - `/logs on`: Logs are automatically sent in the current channel.
+    - `/logs off`: Disables logs automatically sent in the channel.
+- `/clear`: Deletes the last messages (max 100) in the current channel.
+  - **With parameters**
+    - `/clear 10`: If you specify a number, it will delete the number of last messages.
+- `/test`: Toggles test mode. Test mode toggles the Discord bot to the trigger's test URL. Useful if you want to see how a workflow is executed and how data is transmitted. Once test mode is enabled, go to the Discord Trigger interface and click **Get test event** then on Discord send a message to trigger the workflow.
+  - **With parameters**
+    - `/test true`: Enables test mode.
+    - `/test false`: Disables test mode.
 
-## Dépannage
+## Troubleshooting
 
-- Il y a un [problème connu](https://github.com/edbrdi/n8n-nodes-discord/issues/10) avec le processus de mise à jour ou certaines nouvelles installations résultant en l'icône Discord manquante (nœuds non reconnus). Pour résoudre ce problème, vous devez simplement redémarrer n8n.
-- Si vous ne pouvez pas mettre à jour les nœuds via l'interface, essayez de les désinstaller et de les réinstaller.
-- Avant de signaler un problème, assurez-vous d'avoir correctement configuré le bot (en particulier les permissions) et que vos déclencheurs sont activés. Vous ne pouvez pas tester un déclencheur non activé.
+- There is a [known issue](https://github.com/edbrdi/n8n-nodes-discord/issues/10) with the update process or some new installations resulting in the missing Discord icon (nodes not recognized). To fix this, you just need to restart n8n.
+- If you can't update the nodes via the interface, try uninstalling and reinstalling them.
+- Before reporting an issue, make sure you have properly configured the bot (especially permissions) and that your triggers are enabled. You cannot test a disabled trigger.
 
-## Captures d'écran
+## Screenshots
 
 ![](images/screen-1.png)
 
 ![](images/screen-2.png)
 
-## Licence
+## License
 
 MIT License
 
 Copyright (c) 2024 [https://github.com/edbrdi](https://github.com/edbrdi)
 
-Permission est accordée, gratuitement, à toute personne obtenant une copie
-de ce logiciel et des fichiers de documentation associés (le "Logiciel"), de traiter
-le Logiciel sans restriction, y compris, sans limitation, les droits
-d'utiliser, de copier, de modifier, de fusionner, de publier, de distribuer, de sous-licencier,
-et/ou de vendre des copies du Logiciel, et de permettre aux personnes à qui le Logiciel est
-fourni de le faire, sous réserve des conditions suivantes :
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-L'avis de droit d'auteur ci-dessus et cet avis d'autorisation doivent être inclus dans toutes
-les copies ou parties substantielles du Logiciel.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-LE LOGICIEL EST FOURNI "TEL QUEL", SANS GARANTIE D'AUCUNE SORTE, EXPRESSE OU
-IMPLICITE, Y COMPRIS, MAIS SANS S'Y LIMITER, LES GARANTIES DE QUALITÉ MARCHANDE,
-D'ADÉQUATION À UN USAGE PARTICULIER ET DE NON-VIOLATION. EN AUCUN CAS LES
-AUTEURS OU DÉTENTEURS DU DROIT D'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION,
-DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE DÉLIT
-OU AUTRE, DÉCOULANT DE, OU EN RELATION AVEC LE LOGICIEL OU L'UTILISATION OU D'AUTRES
-TRANSACTIONS DANS LE LOGICIEL.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

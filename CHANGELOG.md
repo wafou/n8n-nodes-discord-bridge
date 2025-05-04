@@ -4,13 +4,17 @@
 
 ### Initial
 
-- Fork du projet original [n8n-nodes-discord](https://github.com/edbrdi/n8n-nodes-discord)
-- Renommage du projet en `n8n-nodes-discord-bridge`
+- Fork of the original project [n8n-nodes-discord](https://github.com/edbrdi/n8n-nodes-discord)
+- Project renamed to `n8n-nodes-discord-bridge`
 
-### Ajouté
+### Added
 
-- Support des réactions Discord (ajout/suppression)
-  - Nouveau type de déclencheur "Reaction" dans le nœud Discord Trigger
-  - Ajout des champs `reactionEmoji` et `reactionAction` dans les données retournées
-  - Possibilité de filtrer les réactions par canal et rôle
-  - Support des emojis standards et personnalisés
+- Discord reactions support (add/remove)
+  - New "Reaction" trigger type in Discord Trigger node
+  - Added `reactionEmoji` and `reactionAction` fields in returned data
+  - Ability to filter reactions by channel and role
+  - Support for standard and custom emojis
+- Documentation updates
+  - Added documentation for reaction features
+  - Description of emoji filters and reaction event types
+  - Full translation to English with AI assistance
