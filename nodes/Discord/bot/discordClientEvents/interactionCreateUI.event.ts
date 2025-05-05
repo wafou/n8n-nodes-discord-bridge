@@ -49,17 +49,21 @@ export default async function (client: Client) {
 
             const labels: string[] = [];
 
-            interaction.message.components.forEach((component) => {
-              component.components.forEach((element) => {
+            interaction.message.components.forEach((component: any) => {
+              component.components.forEach((element: any) => {
                 if (
                   element.type === ComponentType.Button &&
                   element.customId === interaction.customId
                 ) {
                   if (element.label) labels.push(element.label);
-                } else if (element.type === ComponentType.SelectMenu) {
-                  element.options.forEach((option) => {
-                    // @ts-ignore
-                    if (interaction.values.includes(option.value)) labels.push(option.label);
+                } else if (element.type === ComponentType.StringSelect) {
+                  element.options.forEach((option: any) => {
+                    if (
+                      interaction.isStringSelectMenu() &&
+                      interaction.values.includes(option.value)
+                    ) {
+                      labels.push(option.label);
+                    }
                   });
                 }
               });
