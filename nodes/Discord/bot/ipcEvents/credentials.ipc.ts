@@ -13,7 +13,7 @@ export default async function (ipc: typeof Ipc, client: Client) {
       ) {
         if (data.token && data.clientId) {
           state.login = true;
-          client.destroy();
+          // client.destroy();
           commands(data.token, data.clientId, client).catch((e) => {
             addLog(`${e}`, client);
           });
