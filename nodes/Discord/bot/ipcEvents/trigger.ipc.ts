@@ -33,7 +33,7 @@ export default async function (ipc: typeof Ipc, client: Client) {
         // push trigger command to list
         if (parameters.type === 'command' && parameters.active) {
           commandsParam.push({
-            name: parameters.value || 'command',
+            name: parameters.name || 'command',
             description: parameters.description || 'Custom command',
             options: [],
           });
