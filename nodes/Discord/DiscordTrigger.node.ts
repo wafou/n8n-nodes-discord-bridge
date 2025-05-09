@@ -101,8 +101,6 @@ export class DiscordTrigger implements INodeType {
           parameters[key] = this.getNodeParameter(key, '') as any;
         });
 
-        console.log('Trigger parameters:', parameters);
-
         ipc.of.bot.emit('trigger', {
           ...parameters,
           baseUrl,

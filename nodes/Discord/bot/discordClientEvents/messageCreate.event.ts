@@ -15,22 +15,7 @@ export default async function (client: Client) {
       const channelId = message.channelId;
       const triggers = state.channels[channelId] || state.channels['all'] || [];
 
-      addDebugLog('Available triggers for channel:', {
-        channelId,
-        triggers: triggers.map((t) => ({
-          webhookId: t.webhookId,
-          type: t.type,
-          debug: t.debug,
-        })),
-      });
-
       for (const trigger of triggers) {
-        addDebugLog('Processing trigger:', {
-          webhookId: trigger.webhookId,
-          type: trigger.type,
-          debug: trigger.debug,
-        });
-
         if (trigger.debug) {
           addDebugLog('Received Discord message:', {
             content: message.content,

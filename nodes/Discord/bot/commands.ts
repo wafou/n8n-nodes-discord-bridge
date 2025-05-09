@@ -26,7 +26,6 @@ export const registerCommands = async (
   clientId: string,
   triggerCommands?: RESTPostAPIApplicationCommandsJSONBody[],
 ) => {
-  console.log('registering commands');
   const commands = await Promise.all(awaitingCommands).catch((e) => e);
 
   // commands deployment

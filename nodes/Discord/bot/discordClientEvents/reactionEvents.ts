@@ -81,6 +81,7 @@ export const handleReactionAdd = async (
     // Envoyer l'événement au webhook
     const fullUser = await user.fetch();
     const fullReaction = await reaction.fetch();
+
     await triggerWorkflow(
       trigger.webhookId,
       message as Message,

@@ -39,7 +39,6 @@ export const connection = (credentials: ICredentials): Promise<string> => {
 export const getChannels = async (that: any): Promise<INodePropertyOptions[]> => {
   const endMessage = ' - Close and reopen this node modal once you have made changes.';
 
-  console.log('credentials');
   const credentials = await that.getCredentials('discordApi').catch((e: any) => e);
   const res = await connection(credentials).catch((e) => e);
   if (!['ready', 'already'].includes(res)) {
