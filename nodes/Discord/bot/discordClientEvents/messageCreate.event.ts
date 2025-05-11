@@ -16,16 +16,16 @@ export default async function (client: Client) {
       const triggers = state.channels[channelId] || state.channels['all'] || [];
 
       for (const trigger of triggers) {
-        if (trigger.debug) {
-          addDebugLog('Received Discord message:', {
-            content: message.content,
-            author: message.author.tag,
-            channelId: message.channelId,
-            triggerType: trigger.type,
-          });
-        }
-
         if (trigger.type === 'message') {
+          if (trigger.debug) {
+            addDebugLog('Received Discord message:', {
+              content: message.content,
+              author: message.author.tag,
+              channelId: message.channelId,
+              triggerType: trigger.type,
+            });
+          }
+
           if (trigger.roleIds.length) {
             const hasRole = trigger.roleIds.some((role) => userRoles?.includes(role));
             if (!hasRole) return;

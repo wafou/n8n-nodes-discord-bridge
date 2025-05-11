@@ -1,6 +1,6 @@
 import { MessageReaction, User, PartialMessageReaction, PartialUser, Message } from 'discord.js';
 import state from '../state';
-import { triggerWorkflow } from '../helpers';
+import { triggerWorkflow, addDebugLog } from '../helpers';
 
 interface ITrigger {
   type: string;
@@ -23,15 +23,21 @@ export const handleReactionAdd = async (
   const message = reaction.message;
   const channel = message.channel;
 
-  // Vérifier si le channel est dans la liste des channels à surveiller
   const triggers = Object.values(state.triggers).filter(
     (trigger: ITrigger) =>
       trigger.type === 'reaction' &&
-      (!trigger.channelIds?.length || trigger.channelIds.includes(channel.id)) &&
+      (!trigger.channelIds?.length ||
+        trigger.channelIds.includes(channel.id) ||
+        trigger.channelIds.includes('all')) &&
       (trigger.reactionType === 'all' || trigger.reactionType === 'add'),
   );
 
   for (const trigger of triggers) {
+    addDebugLog('Received Discord reaction:', {
+      reaction: reaction,
+      trigger: trigger,
+    });
+
     // Vérifier le rôle de l'utilisateur
     if (trigger.roleIds?.length && !user.bot) {
       const member = await message.guild?.members.fetch(user.id);
